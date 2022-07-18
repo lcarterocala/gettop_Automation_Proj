@@ -17,10 +17,4 @@ Feature: Tests for gettop searches
     And Verify product category links in footer are working
     And Verify presence and function of go back to top button
 
-  Scenario: Verify Price Filter CTA and Reset function
-    Given Open home page
-    When ipad is selected from menu bar
-    And Filter price is adjusted
-    And Filter button is clicked
-    Then Close the applied filters
-    And Verify price filter has been reset
+
