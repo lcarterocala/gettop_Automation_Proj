@@ -6,6 +6,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import MoveTargetOutOfBoundsException
 
 from pages.base_page import Page
 
@@ -54,18 +56,27 @@ class Footer(Page):
         print('Copyright is present in the footer')
 
     def verify_product_category_links(self):
-        product_category_links = self.driver.find_elements(*self.PRODUCT_CATEGORY_LINKS)
-        num_of_links = len(product_category_links)
-        actions = ActionChains(self.driver)
-        for links in product_category_links:
-            hover = actions.move_to_element(links)
-            hover.perform()
+        try:
+            product_category_links = self.driver.find_elements(*self.PRODUCT_CATEGORY_LINKS)
+            num_of_links = len(product_category_links)
+            actions = ActionChains(self.driver)
+            for links in product_category_links:
+                hover = actions.move_to_element(links)
+                hover.perform()
             sleep(1)
-        print(f'There are {num_of_links} product category links in the footer. ')
-        print('Hover feature of links, exploited during this test!')
+            print(f'There are {num_of_links} product category links in the footer. ')
+            print('Hover feature of links, exploited during this test!')
+        except MoveTargetOutOfBoundsException:
+            print('Failure due to out of bounds exception')
+            print(MoveTargetOutOfBoundsException)
 
     def go_to_top_btn(self):
-        go_top_btn = self.driver.find_element(*self.GO_TO_TOP_BTN)
-        go_top_btn.click()
+        try:
+            go_top_btn = self.driver.wait.until(EC.element_to_be_clickable(self.GO_TO_TOP_BTN))
+            # go_top_btn = self.driver.find_element(*self.GO_TO_TOP_BTN)
+            go_top_btn.click()
+        except TimeoutException:
+            print('Loading failed duet to timeout.')
+            print(TimeoutException)
         sleep(4)
 
