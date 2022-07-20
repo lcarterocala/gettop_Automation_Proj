@@ -5,6 +5,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 
 from pages.base_page import Page
@@ -30,31 +33,48 @@ class CartPage(Page):
     OUT_OF_STOCK_LABEL = (By.CSS_SELECTOR, 'p.stock.out-of-stock')
 
     def product_select(self):
-        product = self.driver.find_element(*self.PRODUCT_TO_SELECT)
-        product.click()
+        try:
+            product = self.driver.find_element(*self.PRODUCT_TO_SELECT)
+            product.click()
+        except NoSuchElementException:
+            print('Failure due to no such element exception')
+            print(NoSuchElementException)
 
     def modify_cart_signs(self):
-        # click on cart plus to add product
-        cart_plus_click = self.driver.find_element(*self.CART_PLUS)
-        cart_plus_click.click()
-        sleep(3)
-        # click on cart minus to subtract product
-        cart_minus_click = self.driver.find_element(*self.CART_MINUS)
-        cart_minus_click.click()
+        try:
+            # click on cart plus to add product
+            cart_plus_click = self.driver.find_element(*self.CART_PLUS)
+            cart_plus_click.click()
+            sleep(3)
+            # click on cart minus to subtract product
+            cart_minus_click = self.driver.find_element(*self.CART_MINUS)
+            cart_minus_click.click()
+        except NoSuchElementException:
+            print('Failure due to no such element exception')
+            print(NoSuchElementException)
         sleep(3)
 
     def cart_input_amount(self):
-        item_num = self.driver.find_element(*self.CART_INPUT)
-        item_num.clear()
-        item_num.send_keys('7')
+        try:
+            item_num = self.driver.find_element(*self.CART_INPUT)
+            item_num.clear()
+            item_num.send_keys('7')
+        except NoSuchElementException:
+            print('Failure due to no such element exception')
+            print(NoSuchElementException)
         sleep(3)
 
     def add_to_cart_btn(self):
-        cart_btn = self.driver.find_element(*self.CART_ADD_BTN)
-        cart_btn.click()
-        print('Item added to cart confirmation is visible!')
-        # remove_from_cart = driver.find_element(*REMOVE_FROM_CART_ICON)
-        # remove_from_cart.click()
+        try:
+            cart_btn = self.driver.find_element(*self.CART_ADD_BTN)
+            cart_btn.click()
+            print('Item added to cart confirmation is visible!')
+            sleep(3)
+            remove_from_cart = self.driver.find_element(*self.REMOVE_FROM_CART_ICON)
+            remove_from_cart.click()
+        except NoSuchElementException:
+            print('Failure due no such element exception')
+            print(NoSuchElementException)
         sleep(5)
 
     def arrow_right_btn(self):
@@ -68,17 +88,25 @@ class CartPage(Page):
             arrow_left.click()
 
     def arrow_over_btns(self):
-        self.arrow_right_btn()
-        self.arrow_left_btn()
+        try:
+            self.arrow_right_btn()
+            self.arrow_left_btn()
+        except NoSuchElementException:
+            print('Failure due to no such element exception')
+            print(NoSuchElementException)
 
     def verify_product_status(self):
-        expected_outcome = 'Out of stock'
-        menu_watch = self.driver.find_element(*self.MENU_ITEM_WATCH)
-        menu_watch.click()
-        sleep(2)
-        watch_black = self.driver.find_element(*self.OUT_OF_STOCK_WATCH)
-        watch_black.click()
-        sleep(3)
-        actual_outcome = self.driver.find_element(*self.OUT_OF_STOCK_LABEL)
-        assert actual_outcome.text == expected_outcome, f'Error: the item is not out of stock.'
-        print('Item out of stock, verified.')
+        try:
+            expected_outcome = 'Out of stock'
+            menu_watch = self.driver.find_element(*self.MENU_ITEM_WATCH)
+            menu_watch.click()
+            sleep(2)
+            watch_black = self.driver.find_element(*self.OUT_OF_STOCK_WATCH)
+            watch_black.click()
+            sleep(3)
+            actual_outcome = self.driver.find_element(*self.OUT_OF_STOCK_LABEL)
+            assert actual_outcome.text == expected_outcome, f'Error: the item is not out of stock.'
+            print('Item out of stock, verified.')
+        except ElementNotInteractableException:
+            print('Failure due to element not interactable exception')
+            print(ElementNotInteractableException)
